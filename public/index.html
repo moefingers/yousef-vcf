@@ -397,6 +397,10 @@
           </div>
         </div>
         <div class="qr-hint">Electroplanet - Laayoune</div>
+        <div class="qr-density" style="display:flex;align-items:center;gap:8px;justify-content:center;margin:6px 0;">
+          <label for="qrDensity" style="font-size:.75rem;opacity:.7;">Density</label>
+          <input type="range" id="qrDensity" min="0.5" max="1" step="0.01" value="1" style="width:120px;accent-color:#e10b1c;">
+        </div>
         <button class="btn btn-secondary" onclick="flipCard()" style="max-width: 200px;">
           <i data-lucide="arrow-left"></i>
           <span data-i18n="backToCard"></span>
@@ -510,7 +514,7 @@
       container.classList.toggle('flipped');
       if (!qrDrawn) {
         qrDrawn = true;
-        drawQR(document.getElementById('qrCanvas'), window.location.href);
+        drawQR(document.getElementById('qrCanvas'), window.location.href, +document.getElementById('qrDensity').value);
       }
     }
 
@@ -558,9 +562,9 @@
         });
     }
 
-    // QR Code renderer using qrcode-generator with ECC H (30% error correction)
-    function drawQR(canvas, text) {
-      // Type 0 = auto-detect version, H = highest error correction
+    // QR Code renderer using qrcode-generator with ECC M (15% error correction)
+    function drawQR(canvas, text, scale) {
+      if (typeof scale === 'undefined') scale = 1;
       var qr = qrcode(0, 'M');
       qr.addData(text);
       qr.make();
@@ -577,21 +581,28 @@
       ctx.fillStyle = '#1a1a1a';
       ctx.fillRect(0, 0, totalSize, totalSize);
 
-      // Red modules with slight rounding
+      // Red modules with dynamic scaling
       ctx.fillStyle = '#e10b1c';
+      var drawSize = cellSize * scale;
+      var offset = (cellSize - drawSize) / 2;
+      var radius = Math.max(0.5, drawSize * 0.15);
       for (var r = 0; r < moduleCount; r++) {
         for (var c = 0; c < moduleCount; c++) {
           if (qr.isDark(r, c)) {
-            var x = (c + quietZone) * cellSize;
-            var y = (r + quietZone) * cellSize;
+            var x = (c + quietZone) * cellSize + offset;
+            var y = (r + quietZone) * cellSize + offset;
             ctx.beginPath();
-            ctx.roundRect(x, y, cellSize, cellSize, 1);
+            ctx.roundRect(x, y, drawSize, drawSize, radius);
             ctx.fill();
           }
         }
       }
-
     }
+
+    // Wire up density slider
+    document.getElementById('qrDensity').addEventListener('input', function() {
+      drawQR(document.getElementById('qrCanvas'), window.location.href, +this.value);
+    });
   </script>
 </body>
 </html>
