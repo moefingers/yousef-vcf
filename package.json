@@ -1,0 +1,13 @@
+{
+  "name": "yousef-vcf",
+  "version": "1.0.0",
+  "description": "VCF contact card served via GitHub Pages",
+  "homepage": "https://moefingers.github.io/yousef-vcf/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/moefingers/yousef-vcf.git"
+  },
+  "author": "Youssef Elmrabit",
+  "license": "MIT",
+  "private": true
+}
