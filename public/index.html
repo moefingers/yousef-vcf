@@ -504,12 +504,12 @@
       canvas.height = size;
       var ctx = canvas.getContext('2d');
 
-      // White background with rounded corners
-      ctx.fillStyle = '#fff';
+      // Dark background
+      ctx.fillStyle = '#1a1a1a';
       ctx.fillRect(0, 0, size, size);
 
-      // Draw modules
-      ctx.fillStyle = '#111';
+      // Red modules
+      ctx.fillStyle = '#e10b1c';
       for (var r = 0; r < modules.length; r++) {
         for (var c = 0; c < modules[r].length; c++) {
           if (modules[r][c]) {
