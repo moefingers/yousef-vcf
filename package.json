@@ -9,5 +9,11 @@
   },
   "author": "Youssef Elmrabit",
   "license": "MIT",
-  "private": true
+  "scripts": {
+    "deploy": "gh-pages -d public"
+  },
+  "private": true,
+  "devDependencies": {
+    "gh-pages": "^6.3.0"
+  }
 }
