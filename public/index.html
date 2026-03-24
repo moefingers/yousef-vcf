@@ -301,6 +301,61 @@
       color: #666;
     }
 
+    /* Language toggle accordion */
+    .lang-switcher {
+      position: absolute;
+      top: 0.75rem;
+      right: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid #333;
+      border-radius: 18px;
+      height: 36px;
+      cursor: pointer;
+      z-index: 2;
+      -webkit-tap-highlight-color: transparent;
+      overflow: hidden;
+      transition: background 0.2s;
+    }
+    .lang-switcher:hover { background: rgba(255,255,255,0.1); }
+    .lang-switcher-icon {
+      flex-shrink: 0;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ccc;
+      transition: color 0.2s;
+    }
+    .lang-switcher:hover .lang-switcher-icon { color: #e10b1c; }
+    .lang-switcher-icon i { width: 18px; height: 18px; }
+    .lang-labels {
+      display: grid;
+      grid-template-rows: 0fr 0fr 0fr;
+      transition: grid-template-rows 0.3s ease;
+      padding-right: 0.5rem;
+    }
+    .lang-labels span {
+      overflow: hidden;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #666;
+      line-height: 1;
+      min-height: 0;
+      transition: color 0.2s;
+    }
+    .lang-labels span.active { color: #e10b1c; }
+    .lang-labels[data-active="en"] { grid-template-rows: 1fr 0fr 0fr; }
+    .lang-labels[data-active="fr"] { grid-template-rows: 0fr 1fr 0fr; }
+    .lang-labels[data-active="ar"] { grid-template-rows: 0fr 0fr 1fr; }
+    /* Keep lang switcher pinned to top-right regardless of direction */
+    [dir="rtl"] .lang-switcher { direction: ltr; }
+
     /* RTL */
     [dir="rtl"] .info { text-align: right; }
     [dir="rtl"] .info-content { text-align: right; }
@@ -313,7 +368,15 @@
     <div class="card-inner">
 
       <!-- FRONT -->
-      <div class="card-front">
+      <div class="card-front" style="position:relative;">
+        <div class="lang-switcher" onclick="cycleLang()" title="Change language">
+          <div class="lang-switcher-icon"><i data-lucide="globe"></i></div>
+          <div class="lang-labels" id="langLabels" data-active="en">
+            <span data-lang="en">EN</span>
+            <span data-lang="fr">FR</span>
+            <span data-lang="ar">AR</span>
+          </div>
+        </div>
         <div class="coin">
           <div class="coin-inner">
             <div class="coin-face coin-front-img">
@@ -473,7 +536,26 @@
       });
     }
 
+    var langs = ['en', 'fr', 'ar'];
+
+    function syncLangLabels() {
+      var container = document.getElementById('langLabels');
+      if (!container) return;
+      container.setAttribute('data-active', currentLang);
+      container.querySelectorAll('span').forEach(function(s) {
+        s.classList.toggle('active', s.getAttribute('data-lang') === currentLang);
+      });
+    }
+
+    function cycleLang() {
+      var idx = langs.indexOf(currentLang);
+      var next = langs[(idx + 1) % langs.length];
+      applyLang(next);
+      syncLangLabels();
+    }
+
     applyLang(navigator.language || 'en');
+    syncLangLabels();
 
     // Init Lucide icons
     lucide.createIcons();
