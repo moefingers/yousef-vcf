@@ -545,7 +545,7 @@
     // QR Code renderer using qrcode-generator with ECC H (30% error correction)
     function drawQR(canvas, text) {
       // Type 0 = auto-detect version, H = highest error correction
-      var qr = qrcode(0, 'H');
+      var qr = qrcode(0, 'M');
       qr.addData(text);
       qr.make();
 
