@@ -7,6 +7,16 @@ VCF contact card for Youssef Elmrabit, served via GitHub Pages.
 - **Landing page:** https://moefingers.github.io/yousef-vcf/
 - **Direct download:** https://moefingers.github.io/yousef-vcf/yousef.vcf
 
+## Testing Languages
+
+Open browser DevTools console (`F12`) and run:
+
+```js
+applyLang('en')  // English
+applyLang('fr')  // French
+applyLang('ar')  // Arabic (RTL)
+```
+
 ## Structure
 
 ```
