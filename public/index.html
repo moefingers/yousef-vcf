@@ -219,6 +219,12 @@
       border: 1px solid #333;
     }
     .btn-secondary:hover { background: rgba(255,255,255,0.1); }
+    .btn-share {
+      background: rgba(255,255,255,0.06);
+      color: #5AC8FA;
+      border: 1px solid #333;
+    }
+    .btn-share:hover { background: rgba(255,255,255,0.1); }
     .btn-whatsapp {
       background: rgba(255,255,255,0.06);
       color: #25D366;
@@ -356,7 +362,7 @@
               <i data-lucide="message-circle"></i>
               <span>WhatsApp</span>
             </a>
-            <button class="btn btn-secondary" id="shareBtn" onclick="shareContact()" style="display:none">
+            <button class="btn btn-share" id="shareBtn" onclick="shareContact()" style="display:none">
               <i data-lucide="share-2"></i>
               <span data-i18n="share"></span>
             </button>
