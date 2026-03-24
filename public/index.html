@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Yousef - Contact Card</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Youssef Elmrabit - Contact</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -12,120 +13,660 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background: #f5f5f5;
-      color: #333;
+      background: linear-gradient(135deg, #2a0408 0%, #111 40%, #111 60%, #2a0408 100%);
+      color: #eee;
+      padding: 1rem;
     }
     .card {
-      background: white;
+      background: linear-gradient(145deg, rgba(225,11,28,0.08) 0%, rgba(26,26,26,0.7) 40%, rgba(26,26,26,0.7) 70%, rgba(225,11,28,0.05) 100%);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       border-radius: 16px;
-      padding: 2.5rem;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      padding: 2rem 2rem 1.5rem;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
       text-align: center;
       max-width: 400px;
-      width: 90%;
+      width: 100%;
+      border: 1px solid rgba(225,11,28,0.15);
     }
-    h1 { font-size: 1.8rem; margin-bottom: 0.25rem; }
-    .title { color: #666; font-size: 0.95rem; }
-    .org { color: #888; font-size: 0.85rem; margin-bottom: 1.25rem; }
+
+    /* Coin */
+    .coin {
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 1rem;
+      perspective: 600px;
+    }
+    .coin-inner {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      animation: coin-spin 4s ease-in-out infinite;
+    }
+    .coin-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 50%;
+      overflow: hidden;
+    }
+    .coin-front {
+      background: #1a1a1a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .coin-front img { width: 100%; height: 100%; }
+    .coin-back { transform: rotateY(180deg); }
+    .coin-back img { width: 100%; height: 100%; object-fit: cover; }
+    @keyframes coin-spin {
+      0%, 100% { transform: rotateY(0deg); }
+      40%, 60% { transform: rotateY(180deg); }
+    }
+
+    /* Header */
+    h1 { font-size: 1.8rem; margin-bottom: 0.25rem; color: #e10b1c; }
+    .title { color: #ccc; font-size: 0.95rem; }
+    .org { color: #999; font-size: 0.85rem; margin-bottom: 1.25rem; }
+
+    /* Info rows */
     .info {
       text-align: left;
       margin: 1.25rem 0;
-      border-top: 1px solid #eee;
-      padding-top: 1rem;
+      border-top: 1px solid #333;
+      padding-top: 0.5rem;
     }
     .info-row {
       display: flex;
-      align-items: flex-start;
+      align-items: center;
       gap: 0.75rem;
-      padding: 0.5rem 0;
+      padding: 0.6rem 0.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+      position: relative;
     }
-    .info-row + .info-row { border-top: 1px solid #f0f0f0; }
+    .info-row:hover { background: rgba(255,255,255,0.04); }
+    .info-row + .info-row { border-top: 1px solid #2a2a2a; }
     .info-label {
-      color: #999;
-      font-size: 0.75rem;
+      color: #888;
+      font-size: 0.7rem;
       text-transform: uppercase;
       letter-spacing: 0.04em;
-      min-width: 60px;
-      padding-top: 2px;
+      min-width: 55px;
+      padding-top: 1px;
     }
     .info-value {
       font-size: 0.95rem;
-      color: #333;
+      color: #ddd;
       word-break: break-word;
+      flex: 1;
     }
     .info-value a {
-      color: #007AFF;
+      color: #e10b1c;
       text-decoration: none;
     }
     .info-value a:hover { text-decoration: underline; }
+    .copy-icon {
+      color: #555;
+      font-size: 0.8rem;
+      flex-shrink: 0;
+      transition: color 0.2s;
+    }
+    .info-row:hover .copy-icon { color: #999; }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #e10b1c;
+      color: white;
+      padding: 0.5rem 1.25rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      opacity: 0;
+      transition: opacity 0.3s, transform 0.3s;
+      pointer-events: none;
+      z-index: 10;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Note */
     .note {
       margin-top: 1.25rem;
       padding: 0.75rem 1rem;
-      background: #f9f9f9;
+      background: rgba(34,34,34,0.8);
       border-radius: 8px;
       font-size: 0.9rem;
-      color: #555;
+      color: #bbb;
       text-align: center;
       line-height: 1.5;
       white-space: pre-line;
     }
-    button.download {
-      display: inline-block;
-      background: #007AFF;
-      color: white;
-      border: none;
-      cursor: pointer;
-      padding: 0.75rem 2rem;
-      border-radius: 8px;
-      font-size: 1rem;
-      font-weight: 500;
-      transition: background 0.2s;
+
+    /* Buttons */
+    .actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
       margin-top: 1.25rem;
     }
-    button.download:hover { background: #0056CC; }
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      border: none;
+      cursor: pointer;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: background 0.2s, transform 0.1s;
+      text-decoration: none;
+      width: 100%;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn-primary {
+      background: #e10b1c;
+      color: white;
+    }
+    .btn-primary:hover { background: #b80917; }
+    .btn-secondary {
+      background: rgba(255,255,255,0.08);
+      color: #eee;
+      border: 1px solid #333;
+    }
+    .btn-secondary:hover { background: rgba(255,255,255,0.12); }
+    .btn-whatsapp {
+      background: #25D366;
+      color: white;
+    }
+    .btn-whatsapp:hover { background: #1da851; }
+    .btn-row {
+      display: flex;
+      gap: 0.6rem;
+    }
+    .btn-row .btn { flex: 1; }
+
+    /* QR */
+    .qr-section {
+      margin-top: 1rem;
+      overflow: hidden;
+      max-height: 0;
+      transition: max-height 0.4s ease;
+    }
+    .qr-section.open { max-height: 250px; }
+    .qr-section canvas {
+      margin: 0.75rem auto 0;
+      display: block;
+      border-radius: 8px;
+    }
+
+    /* RTL */
+    [dir="rtl"] .info { text-align: right; }
+    [dir="rtl"] .info-row { flex-direction: row-reverse; }
+
+    /* SVG icons inline */
+    .icon {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
   </style>
 </head>
 <body>
   <div class="card">
+    <div class="coin">
+      <div class="coin-inner">
+        <div class="coin-face coin-front">
+          <img src="electroplanet-logo.svg" alt="Electroplanet">
+        </div>
+        <div class="coin-face coin-back">
+          <img src="youssef_gemini_suit_cropped.webp" alt="Youssef Elmrabit">
+        </div>
+      </div>
+    </div>
     <h1>Youssef Elmrabit</h1>
-    <div class="title">Conseiller Commercial</div>
+    <div class="title" data-i18n="title"></div>
     <div class="org">Electroplanet</div>
 
     <div class="info">
-      <div class="info-row">
-        <span class="info-label">Phone</span>
-        <span class="info-value"><a href="tel:+212628280337">+212 628-280337</a></span>
+      <div class="info-row" onclick="copyText('+212 628-280337', this)" title="Copy phone">
+        <span class="info-label" data-i18n="phone"></span>
+        <span class="info-value"><a href="tel:+212628280337" onclick="event.stopPropagation()">+212 628-280337</a></span>
+        <span class="copy-icon">&#x2398;</span>
       </div>
-      <div class="info-row">
-        <span class="info-label">Email</span>
-        <span class="info-value"><a href="mailto:youssefelmrabit8@gmail.com">youssefelmrabit8@gmail.com</a></span>
+      <div class="info-row" onclick="copyText('youssefelmrabit8@gmail.com', this)" title="Copy email">
+        <span class="info-label" data-i18n="email"></span>
+        <span class="info-value"><a href="mailto:youssefelmrabit8@gmail.com" onclick="event.stopPropagation()">youssefelmrabit8@gmail.com</a></span>
+        <span class="copy-icon">&#x2398;</span>
       </div>
-      <div class="info-row">
-        <span class="info-label">Address</span>
-        <span class="info-value">Electroplanet Laayoune - Maroc</span>
+      <div class="info-row" onclick="openMap()" title="Open in Maps">
+        <span class="info-label" data-i18n="address"></span>
+        <span class="info-value"><span data-i18n="addressValue"></span></span>
+        <span class="copy-icon">&#x279A;</span>
       </div>
     </div>
 
-    <div class="note">Bienvenue à tous
-مرحبا بالجميع</div>
+    <div class="note" data-i18n="note"></div>
 
-    <button class="download" onclick="downloadVCF()">Save Contact</button>
+    <div class="actions">
+      <button class="btn btn-primary" id="saveBtn" onclick="downloadVCF()">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        <span data-i18n="save"></span>
+      </button>
+      <div class="btn-row">
+        <a class="btn btn-whatsapp" href="https://wa.me/212628280337" target="_blank" rel="noopener">
+          <svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          <span>WhatsApp</span>
+        </a>
+        <button class="btn btn-secondary" id="shareBtn" onclick="shareContact()" style="display:none">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          <span data-i18n="share"></span>
+        </button>
+      </div>
+      <button class="btn btn-secondary" onclick="toggleQR()">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="3" height="3"/><line x1="21" y1="14" x2="21" y2="17"/><line x1="14" y1="21" x2="17" y2="21"/></svg>
+        <span data-i18n="qr"></span>
+      </button>
+    </div>
+
+    <div class="qr-section" id="qrSection">
+      <canvas id="qrCanvas"></canvas>
+    </div>
   </div>
 
+  <div class="toast" id="toast"></div>
+
   <script>
+    var i18n = {
+      en: {
+        title: 'Sales Advisor',
+        phone: 'Phone',
+        email: 'Email',
+        address: 'Address',
+        addressValue: 'Electroplanet Laayoune - Morocco',
+        note: 'Welcome, Everyone!',
+        save: 'Save Contact',
+        share: 'Share',
+        qr: 'QR Code',
+        copied: 'Copied!',
+        saved: 'Contact Saved!'
+      },
+      fr: {
+        title: 'Conseiller Commercial',
+        phone: 'Tél',
+        email: 'Email',
+        address: 'Adresse',
+        addressValue: 'Electroplanet Laayoune - Maroc',
+        note: 'Bienvenue à tous',
+        save: 'Enregistrer le contact',
+        share: 'Partager',
+        qr: 'Code QR',
+        copied: 'Copié !',
+        saved: 'Contact enregistré !'
+      },
+      ar: {
+        title: 'مستشار تجاري',
+        phone: 'الهاتف',
+        email: 'البريد',
+        address: 'العنوان',
+        addressValue: 'إلكتروبلانيت العيون - المغرب',
+        note: 'مرحبا بالجميع',
+        save: 'حفظ جهة الاتصال',
+        share: 'مشاركة',
+        qr: 'رمز QR',
+        copied: 'تم النسخ!',
+        saved: 'تم حفظ جهة الاتصال!'
+      }
+    };
+
+    var currentLang = 'en';
+
+    function getStrings() {
+      return i18n[currentLang] || i18n.en;
+    }
+
+    function applyLang(lang) {
+      currentLang = lang.slice(0, 2).toLowerCase();
+      if (!i18n[currentLang]) currentLang = 'en';
+      var strings = getStrings();
+      var dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+      document.documentElement.lang = currentLang;
+      document.documentElement.dir = dir;
+      document.querySelectorAll('[data-i18n]').forEach(function(el) {
+        el.textContent = strings[el.getAttribute('data-i18n')];
+      });
+    }
+
+    applyLang(navigator.language || 'en');
+
+    // Show share button if supported
+    if (navigator.share) {
+      document.getElementById('shareBtn').style.display = '';
+    }
+
+    // Toast
+    function showToast(msg) {
+      var t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(function() { t.classList.remove('show'); }, 2000);
+    }
+
+    // Copy to clipboard
+    function copyText(text) {
+      navigator.clipboard.writeText(text).then(function() {
+        showToast(getStrings().copied);
+      });
+    }
+
+    // Open address in maps
+    function openMap() {
+      window.open('https://maps.app.goo.gl/VchQxnutu3NDjPL47', '_blank');
+    }
+
+    // Save contact — direct link on mobile for native "Add Contact", blob on desktop
     function downloadVCF() {
-      fetch('yousef.vcf')
+      var file = 'yousef-' + currentLang + '.vcf';
+      var isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+      if (isMobile) {
+        window.location.href = file;
+      } else {
+        fetch(file)
+          .then(function(r) { return r.blob(); })
+          .then(function(blob) {
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = 'yousef.vcf';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+          });
+      }
+      var btn = document.getElementById('saveBtn');
+      var orig = btn.querySelector('[data-i18n]').textContent;
+      btn.querySelector('[data-i18n]').textContent = getStrings().saved;
+      setTimeout(function() { btn.querySelector('[data-i18n]').textContent = orig; }, 2000);
+    }
+
+    // Share via Web Share API
+    function shareContact() {
+      var file = 'yousef-' + currentLang + '.vcf';
+      fetch(file)
         .then(function(r) { return r.blob(); })
         .then(function(blob) {
-          var url = URL.createObjectURL(blob);
-          var a = document.createElement('a');
-          a.href = url;
-          a.download = 'yousef.vcf';
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          URL.revokeObjectURL(url);
+          var vcfFile = new File([blob], 'yousef.vcf', { type: 'text/vcard' });
+          navigator.share({
+            title: 'Youssef Elmrabit',
+            text: getStrings().title + ' - Electroplanet',
+            files: [vcfFile]
+          }).catch(function() {
+            // user cancelled share, try without file
+            navigator.share({
+              title: 'Youssef Elmrabit',
+              text: getStrings().title + ' - Electroplanet\n+212 628-280337\nyoussefelmrabit8@gmail.com',
+              url: window.location.href
+            }).catch(function() {});
+          });
         });
+    }
+
+    // QR Code — minimal generator (renders page URL)
+    function toggleQR() {
+      var section = document.getElementById('qrSection');
+      if (section.classList.contains('open')) {
+        section.classList.remove('open');
+        return;
+      }
+      section.classList.add('open');
+      var canvas = document.getElementById('qrCanvas');
+      if (canvas.dataset.drawn) return;
+      canvas.dataset.drawn = '1';
+      drawQR(canvas, window.location.href);
+    }
+
+    // Minimal QR encoder for URL-length data
+    function drawQR(canvas, text) {
+      // Use a simple QR generation via an inline approach
+      // We'll use a tried-and-true method: generate QR matrix
+      var size = 200;
+      canvas.width = size;
+      canvas.height = size;
+      var ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(0, 0, size, size);
+
+      // Encode as a simple QR using the qr-creator pattern
+      var modules = generateQR(text);
+      var cellSize = size / modules.length;
+      ctx.fillStyle = '#111';
+      for (var r = 0; r < modules.length; r++) {
+        for (var c = 0; c < modules[r].length; c++) {
+          if (modules[r][c]) {
+            ctx.fillRect(c * cellSize, r * cellSize, cellSize + 0.5, cellSize + 0.5);
+          }
+        }
+      }
+    }
+
+    // Minimal QR Code generator (Mode Byte, ECC L, Version 1-6)
+    function generateQR(text) {
+      var data = [];
+      for (var i = 0; i < text.length; i++) data.push(text.charCodeAt(i));
+
+      // Version capacities for byte mode, ECC L
+      var caps = [0, 17, 32, 53, 78, 106, 134];
+      var ver = 1;
+      for (var v = 1; v <= 6; v++) { if (caps[v] >= data.length) { ver = v; break; } }
+      var size = ver * 4 + 17;
+
+      // ECC L parameters per version
+      var eccTable = {
+        1: { total: 26, ecc: 7 },
+        2: { total: 44, ecc: 10 },
+        3: { total: 70, ecc: 15 },
+        4: { total: 100, ecc: 20 },
+        5: { total: 134, ecc: 26 },
+        6: { total: 172, ecc: 18 }
+      };
+
+      var totalBytes = eccTable[ver].total;
+      var eccBytes = eccTable[ver].ecc;
+      var dataBytes = totalBytes - eccBytes;
+
+      // Build data codewords
+      var bits = [];
+      function pushBits(val, len) { for (var i = len - 1; i >= 0; i--) bits.push((val >> i) & 1); }
+
+      pushBits(4, 4); // Byte mode indicator
+      var charCountBits = ver <= 9 ? 8 : 16;
+      pushBits(data.length, charCountBits);
+      for (var i = 0; i < data.length; i++) pushBits(data[i], 8);
+      pushBits(0, Math.min(4, dataBytes * 8 - bits.length)); // Terminator
+      while (bits.length % 8 !== 0) bits.push(0); // Pad to byte
+      while (bits.length < dataBytes * 8) {
+        pushBits(0xEC, 8);
+        if (bits.length < dataBytes * 8) pushBits(0x11, 8);
+      }
+
+      var codewords = [];
+      for (var i = 0; i < bits.length; i += 8) {
+        var b = 0;
+        for (var j = 0; j < 8; j++) b = (b << 1) | (bits[i + j] || 0);
+        codewords.push(b);
+      }
+
+      // Reed-Solomon ECC
+      var ecc = rsEncode(codewords, eccBytes);
+      var allCodewords = codewords.concat(ecc);
+
+      // Create module grid
+      var grid = [];
+      var reserved = [];
+      for (var r = 0; r < size; r++) {
+        grid[r] = [];
+        reserved[r] = [];
+        for (var c = 0; c < size; c++) {
+          grid[r][c] = false;
+          reserved[r][c] = false;
+        }
+      }
+
+      // Place finder patterns
+      function placeFinder(row, col) {
+        for (var r = -1; r <= 7; r++) {
+          for (var c = -1; c <= 7; c++) {
+            var rr = row + r, cc = col + c;
+            if (rr < 0 || rr >= size || cc < 0 || cc >= size) continue;
+            var inOuter = r === 0 || r === 6 || c === 0 || c === 6;
+            var inInner = r >= 2 && r <= 4 && c >= 2 && c <= 4;
+            grid[rr][cc] = inOuter || inInner;
+            reserved[rr][cc] = true;
+          }
+        }
+      }
+      placeFinder(0, 0);
+      placeFinder(0, size - 7);
+      placeFinder(size - 7, 0);
+
+      // Timing patterns
+      for (var i = 8; i < size - 8; i++) {
+        grid[6][i] = i % 2 === 0;
+        reserved[6][i] = true;
+        grid[i][6] = i % 2 === 0;
+        reserved[i][6] = true;
+      }
+
+      // Dark module
+      grid[size - 8][8] = true;
+      reserved[size - 8][8] = true;
+
+      // Reserve format info areas
+      for (var i = 0; i < 9; i++) {
+        if (!reserved[8]) break;
+        reserved[8][i] = true;
+        reserved[i][8] = true;
+      }
+      for (var i = 0; i < 8; i++) {
+        reserved[8][size - 1 - i] = true;
+        reserved[size - 1 - i][8] = true;
+      }
+
+      // Alignment patterns for version >= 2
+      if (ver >= 2) {
+        var alignPos = [6, size - 7];
+        for (var ai = 0; ai < alignPos.length; ai++) {
+          for (var aj = 0; aj < alignPos.length; aj++) {
+            var ar = alignPos[ai], ac = alignPos[aj];
+            if (reserved[ar][ac]) continue;
+            for (var r = -2; r <= 2; r++) {
+              for (var c = -2; c <= 2; c++) {
+                var rr = ar + r, cc = ac + c;
+                grid[rr][cc] = Math.abs(r) === 2 || Math.abs(c) === 2 || (r === 0 && c === 0);
+                reserved[rr][cc] = true;
+              }
+            }
+          }
+        }
+      }
+
+      // Place data bits
+      var bitIdx = 0;
+      var allBits = [];
+      for (var i = 0; i < allCodewords.length; i++) {
+        for (var j = 7; j >= 0; j--) allBits.push((allCodewords[i] >> j) & 1);
+      }
+
+      var col = size - 1;
+      var upward = true;
+      while (col > 0) {
+        if (col === 6) col--;
+        for (var cnt = 0; cnt < size; cnt++) {
+          var row = upward ? size - 1 - cnt : cnt;
+          for (var d = 0; d < 2; d++) {
+            var c = col - d;
+            if (reserved[row][c]) continue;
+            grid[row][c] = bitIdx < allBits.length ? !!allBits[bitIdx] : false;
+            bitIdx++;
+          }
+        }
+        upward = !upward;
+        col -= 2;
+      }
+
+      // Apply mask (mask 0: (r+c)%2==0)
+      for (var r = 0; r < size; r++) {
+        for (var c = 0; c < size; c++) {
+          if (!reserved[r][c]) {
+            if ((r + c) % 2 === 0) grid[r][c] = !grid[r][c];
+          }
+        }
+      }
+
+      // Place format info (ECC L = 01, mask 0 = 000 -> 01000 -> with ECC: 0x5412 based on table)
+      var formatBits = 0x5412;
+      var formatPositions1 = [[0,8],[1,8],[2,8],[3,8],[4,8],[5,8],[7,8],[8,8],[8,7],[8,5],[8,4],[8,3],[8,2],[8,1],[8,0]];
+      var formatPositions2 = [[8,size-1],[8,size-2],[8,size-3],[8,size-4],[8,size-5],[8,size-6],[8,size-7],[8,size-8],[size-7,8],[size-6,8],[size-5,8],[size-4,8],[size-3,8],[size-2,8],[size-1,8]];
+      for (var i = 0; i < 15; i++) {
+        var bit = !!((formatBits >> (14 - i)) & 1);
+        var p1 = formatPositions1[i], p2 = formatPositions2[i];
+        grid[p1[0]][p1[1]] = bit;
+        grid[p2[0]][p2[1]] = bit;
+      }
+
+      return grid;
+    }
+
+    // GF(256) Reed-Solomon
+    function rsEncode(data, eccCount) {
+      var gfExp = new Array(512), gfLog = new Array(256);
+      var x = 1;
+      for (var i = 0; i < 255; i++) {
+        gfExp[i] = x;
+        gfLog[x] = i;
+        x <<= 1;
+        if (x >= 256) x ^= 0x11D;
+      }
+      for (var i = 255; i < 512; i++) gfExp[i] = gfExp[i - 255];
+
+      function gfMul(a, b) {
+        if (a === 0 || b === 0) return 0;
+        return gfExp[gfLog[a] + gfLog[b]];
+      }
+
+      // Build generator polynomial
+      var gen = [1];
+      for (var i = 0; i < eccCount; i++) {
+        var newGen = new Array(gen.length + 1).fill(0);
+        for (var j = 0; j < gen.length; j++) {
+          newGen[j] ^= gen[j];
+          newGen[j + 1] ^= gfMul(gen[j], gfExp[i]);
+        }
+        gen = newGen;
+      }
+
+      var msg = data.slice();
+      for (var i = 0; i < eccCount; i++) msg.push(0);
+      for (var i = 0; i < data.length; i++) {
+        var coef = msg[i];
+        if (coef !== 0) {
+          for (var j = 0; j < gen.length; j++) {
+            msg[i + j] ^= gfMul(gen[j], coef);
+          }
+        }
+      }
+      return msg.slice(data.length);
     }
   </script>
 </body>
