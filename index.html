@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Youssef Elmrabit - Contact</title>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="https://unpkg.com/qrcode-generator@1.4.4/qrcode.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #2a0408 0%, #111 40%, #111 60%, #2a0408 100%);
+      color: #eee;
+      padding: 1rem;
+    }
+
+    /* Card flip container */
+    .card-container {
+      perspective: 1200px;
+      max-width: 400px;
+      width: 100%;
+    }
+    .card-inner {
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.6s ease;
+    }
+    .card-container.flipped .card-inner {
+      transform: rotateY(180deg);
+    }
+    .card-front, .card-back {
+      backface-visibility: hidden;
+      background: linear-gradient(145deg, rgba(225,11,28,0.08) 0%, rgba(26,26,26,0.7) 40%, rgba(26,26,26,0.7) 70%, rgba(225,11,28,0.05) 100%);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+      text-align: center;
+      border: 1px solid rgba(225,11,28,0.15);
+    }
+    .card-back {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      transform: rotateY(180deg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1.25rem;
+    }
+
+    /* Coin */
+    .coin {
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 1rem;
+      perspective: 600px;
+    }
+    .coin-inner {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      animation: coin-spin 4s ease-in-out infinite;
+    }
+    .coin-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 50%;
+      overflow: hidden;
+    }
+    .coin-front-img {
+      background: #1a1a1a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .coin-front-img img { width: 100%; height: 100%; }
+    .coin-back-img { transform: rotateY(180deg); }
+    .coin-back-img img { width: 100%; height: 100%; object-fit: cover; }
+    @keyframes coin-spin {
+      0%, 100% { transform: rotateY(0deg); }
+      40%, 60% { transform: rotateY(180deg); }
+    }
+
+    /* Header */
+    h1 { font-size: 1.8rem; margin-bottom: 0.25rem; color: #e10b1c; }
+    .title { color: #ccc; font-size: 0.95rem; }
+    .org { color: #999; font-size: 0.85rem; margin-bottom: 1.25rem; }
+
+    /* Info rows */
+    .info {
+      text-align: left;
+      margin: 1.25rem 0;
+      border-top: 1px solid #333;
+      padding-top: 0.5rem;
+    }
+    .info-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.6rem 0.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .info-row:hover { background: rgba(255,255,255,0.04); }
+    .info-row + .info-row { border-top: 1px solid #2a2a2a; }
+    .info-icon {
+      color: #e10b1c;
+      flex-shrink: 0;
+      width: 18px;
+      height: 18px;
+    }
+    .info-content { flex: 1; min-width: 0; }
+    .info-label {
+      color: #888;
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      line-height: 1;
+      margin-bottom: 2px;
+    }
+    .info-value {
+      font-size: 0.95rem;
+      color: #ddd;
+      word-break: break-word;
+    }
+    .info-value a {
+      color: #ddd;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .info-value a:hover { color: #e10b1c; }
+    .info-value {
+      transition: color 0.2s;
+    }
+    .info-row:hover .info-value { color: #e10b1c; }
+    .copy-hint {
+      color: #444;
+      flex-shrink: 0;
+      width: 14px;
+      height: 14px;
+      transition: color 0.2s;
+    }
+    .info-row:hover .copy-hint { color: #888; }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #e10b1c;
+      color: white;
+      padding: 0.5rem 1.25rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      opacity: 0;
+      transition: opacity 0.3s, transform 0.3s;
+      pointer-events: none;
+      z-index: 10;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Note */
+    .note {
+      margin-top: 1.25rem;
+      padding: 0.75rem 1rem;
+      background: rgba(34,34,34,0.8);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      color: #bbb;
+      text-align: center;
+      line-height: 1.5;
+      white-space: pre-line;
+    }
+
+    /* Buttons */
+    .actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-top: 1.25rem;
+    }
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      border: none;
+      cursor: pointer;
+      padding: 0.7rem 1.25rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: background 0.2s, transform 0.1s;
+      text-decoration: none;
+      width: 100%;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn-primary { background: #e10b1c; color: white; }
+    .btn-primary:hover { background: #b80917; }
+    .btn-secondary {
+      background: rgba(255,255,255,0.06);
+      color: #ccc;
+      border: 1px solid #333;
+    }
+    .btn-secondary:hover { background: rgba(255,255,255,0.1); }
+    .btn-share {
+      background: rgba(255,255,255,0.06);
+      color: #5AC8FA;
+      border: 1px solid #333;
+    }
+    .btn-share:hover { background: rgba(255,255,255,0.1); }
+    .btn-whatsapp {
+      background: rgba(255,255,255,0.06);
+      color: #25D366;
+      border: 1px solid #333;
+    }
+    .btn-whatsapp:hover { background: rgba(255,255,255,0.1); }
+    .btn-row {
+      display: flex;
+      gap: 0.5rem;
+    }
+    .btn-row .btn { flex: 1; }
+    .btn i, .btn [data-lucide] { width: 18px; height: 18px; }
+
+    /* QR back side */
+    .qr-back-title {
+      font-size: 1rem;
+      color: #999;
+      font-weight: 500;
+    }
+    .qr-back-name {
+      font-size: 1.4rem;
+      color: #e10b1c;
+      font-weight: 600;
+    }
+    .qr-wrapper {
+      position: relative;
+      display: inline-block;
+    }
+    #qrCanvas {
+      border-radius: 12px;
+      display: block;
+    }
+    .qr-coin-overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 60px;
+      height: 60px;
+      perspective: 600px;
+    }
+    .qr-coin-overlay .coin-inner {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      animation: coin-spin 4s ease-in-out infinite;
+    }
+    .qr-coin-overlay .coin-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 50%;
+      overflow: hidden;
+      box-shadow: 0 0 0 3px #1a1a1a, 0 0 0 5px #e10b1c;
+    }
+    .qr-coin-overlay .coin-front-img {
+      background: #1a1a1a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .qr-coin-overlay .coin-front-img img { width: 100%; height: 100%; }
+    .qr-coin-overlay .coin-back-img { transform: rotateY(180deg); }
+    .qr-coin-overlay .coin-back-img img { width: 100%; height: 100%; object-fit: cover; }
+    .qr-hint {
+      font-size: 0.8rem;
+      color: #666;
+    }
+
+    /* Language toggle accordion */
+    .lang-switcher {
+      position: absolute;
+      top: 0.75rem;
+      right: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid #333;
+      border-radius: 18px;
+      height: 36px;
+      cursor: pointer;
+      z-index: 2;
+      -webkit-tap-highlight-color: transparent;
+      overflow: hidden;
+      transition: background 0.2s;
+    }
+    .lang-switcher:hover { background: rgba(255,255,255,0.1); }
+    .lang-switcher-icon {
+      flex-shrink: 0;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ccc;
+      transition: color 0.2s;
+    }
+    .lang-switcher:hover .lang-switcher-icon { color: #e10b1c; }
+    .lang-switcher-icon i { width: 18px; height: 18px; }
+    .lang-labels {
+      display: grid;
+      grid-template-rows: 0fr 0fr 0fr;
+      transition: grid-template-rows 0.3s ease;
+      padding-right: 0.5rem;
+    }
+    .lang-labels span {
+      overflow: hidden;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #666;
+      line-height: 1;
+      min-height: 0;
+      transition: color 0.2s;
+    }
+    .lang-labels span.active { color: #e10b1c; }
+    .lang-labels[data-active="en"] { grid-template-rows: 1fr 0fr 0fr; }
+    .lang-labels[data-active="fr"] { grid-template-rows: 0fr 1fr 0fr; }
+    .lang-labels[data-active="ar"] { grid-template-rows: 0fr 0fr 1fr; }
+    /* Keep lang switcher pinned to top-right regardless of direction */
+    [dir="rtl"] .lang-switcher { direction: ltr; }
+
+    /* RTL */
+    [dir="rtl"] .info { text-align: right; }
+    [dir="rtl"] .info-content { text-align: right; }
+    [dir="rtl"] .copy-hint[data-lucide="external-link"] { transform: scaleX(-1); }
+    .info-value a[href^="tel:"] { direction: ltr; unicode-bidi: isolate; }
+  </style>
+</head>
+<body>
+  <div class="card-container" id="cardContainer">
+    <div class="card-inner">
+
+      <!-- FRONT -->
+      <div class="card-front" style="position:relative;">
+        <div class="lang-switcher" onclick="cycleLang()" title="Change language">
+          <div class="lang-switcher-icon"><i data-lucide="globe"></i></div>
+          <div class="lang-labels" id="langLabels" data-active="en">
+            <span data-lang="en">EN</span>
+            <span data-lang="fr">FR</span>
+            <span data-lang="ar">AR</span>
+          </div>
+        </div>
+        <div class="coin">
+          <div class="coin-inner">
+            <div class="coin-face coin-front-img">
+              <img src="electroplanet-logo.svg" alt="Electroplanet">
+            </div>
+            <div class="coin-face coin-back-img">
+              <img src="youssef_gemini_suit_cropped.webp" alt="Youssef Elmrabit">
+            </div>
+          </div>
+        </div>
+        <h1>Youssef Elmrabit</h1>
+        <div class="title" data-i18n="title"></div>
+        <div class="org">Electroplanet</div>
+
+        <div class="info">
+          <div class="info-row" onclick="copyText('+212 628-280337')">
+            <i data-lucide="phone" class="info-icon"></i>
+            <div class="info-content">
+              <div class="info-label" data-i18n="phone"></div>
+              <div class="info-value"><a href="tel:+212628280337" onclick="event.stopPropagation()">+212 628-280337</a></div>
+            </div>
+            <i data-lucide="copy" class="copy-hint"></i>
+          </div>
+          <div class="info-row" onclick="copyText('youssefelmrabit7@gmail.com')">
+            <i data-lucide="mail" class="info-icon"></i>
+            <div class="info-content">
+              <div class="info-label" data-i18n="email"></div>
+              <div class="info-value"><a href="mailto:youssefelmrabit7@gmail.com" onclick="event.stopPropagation()">youssefelmrabit7@gmail.com</a></div>
+            </div>
+            <i data-lucide="copy" class="copy-hint"></i>
+          </div>
+          <div class="info-row" onclick="openMap()">
+            <i data-lucide="map-pin" class="info-icon"></i>
+            <div class="info-content">
+              <div class="info-label" data-i18n="address"></div>
+              <div class="info-value" data-i18n="addressValue"></div>
+            </div>
+            <i data-lucide="external-link" class="copy-hint"></i>
+          </div>
+        </div>
+
+        <div class="note" data-i18n="note"></div>
+
+        <div class="actions">
+          <button class="btn btn-primary" id="saveBtn" onclick="downloadVCF()">
+            <i data-lucide="user-plus"></i>
+            <span data-i18n="save"></span>
+          </button>
+          <div class="btn-row">
+            <a class="btn btn-whatsapp" href="https://wa.me/212628280337" target="_blank" rel="noopener">
+              <i data-lucide="message-circle"></i>
+              <span>WhatsApp</span>
+            </a>
+            <button class="btn btn-share" id="shareBtn" onclick="shareContact()" style="display:none">
+              <i data-lucide="share-2"></i>
+              <span data-i18n="share"></span>
+            </button>
+          </div>
+          <button class="btn btn-secondary" onclick="flipCard()">
+            <i data-lucide="qr-code"></i>
+            <span data-i18n="showQR"></span>
+          </button>
+        </div>
+      </div>
+
+      <!-- BACK (QR) -->
+      <div class="card-back">
+        <div class="qr-back-title" data-i18n="scanToSave"></div>
+        <div class="qr-back-name">Youssef Elmrabit</div>
+        <div class="qr-wrapper">
+          <canvas id="qrCanvas"></canvas>
+          <div class="qr-coin-overlay">
+            <div class="coin-inner">
+              <div class="coin-face coin-front-img">
+                <img src="electroplanet-logo.svg" alt="Electroplanet">
+              </div>
+              <div class="coin-face coin-back-img">
+                <img src="youssef_gemini_suit_cropped.webp" alt="Youssef Elmrabit">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="qr-hint">Electroplanet - Laayoune</div>
+        <button class="btn btn-secondary" onclick="flipCard()" style="max-width: 200px;">
+          <i data-lucide="arrow-left"></i>
+          <span data-i18n="backToCard"></span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    var i18n = {
+      en: {
+        title: 'Sales Advisor',
+        phone: 'Phone',
+        email: 'Email',
+        address: 'Address',
+        addressValue: 'Electroplanet Laayoune - Morocco',
+        note: 'Welcome, Everyone!',
+        save: 'Save Contact',
+        share: 'Share',
+        showQR: 'Show QR Code',
+        backToCard: 'Back',
+        scanToSave: 'Scan to save contact',
+        copied: 'Copied!',
+        saved: 'Contact Saved!'
+      },
+      fr: {
+        title: 'Conseiller Commercial',
+        phone: 'Tél',
+        email: 'Email',
+        address: 'Adresse',
+        addressValue: 'Electroplanet Laayoune - Maroc',
+        note: 'Bienvenue à tous',
+        save: 'Enregistrer le contact',
+        share: 'Partager',
+        showQR: 'Afficher le QR',
+        backToCard: 'Retour',
+        scanToSave: 'Scannez pour enregistrer',
+        copied: 'Copié !',
+        saved: 'Contact enregistré !'
+      },
+      ar: {
+        title: 'مستشار تجاري',
+        phone: 'الهاتف',
+        email: 'البريد',
+        address: 'العنوان',
+        addressValue: 'إلكتروبلانيت العيون - المغرب',
+        note: 'مرحبا بالجميع',
+        save: 'حفظ جهة الاتصال',
+        share: 'مشاركة',
+        showQR: 'عرض رمز QR',
+        backToCard: 'رجوع',
+        scanToSave: 'امسح لحفظ جهة الاتصال',
+        copied: 'تم النسخ!',
+        saved: 'تم حفظ جهة الاتصال!'
+      }
+    };
+
+    var currentLang = 'en';
+
+    function getStrings() { return i18n[currentLang] || i18n.en; }
+
+    function applyLang(lang) {
+      currentLang = lang.slice(0, 2).toLowerCase();
+      if (!i18n[currentLang]) currentLang = 'en';
+      var strings = getStrings();
+      var dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+      document.documentElement.lang = currentLang;
+      document.documentElement.dir = dir;
+      document.querySelectorAll('[data-i18n]').forEach(function(el) {
+        el.textContent = strings[el.getAttribute('data-i18n')];
+      });
+    }
+
+    var langs = ['en', 'fr', 'ar'];
+
+    function syncLangLabels() {
+      var container = document.getElementById('langLabels');
+      if (!container) return;
+      container.setAttribute('data-active', currentLang);
+      container.querySelectorAll('span').forEach(function(s) {
+        s.classList.toggle('active', s.getAttribute('data-lang') === currentLang);
+      });
+    }
+
+    function cycleLang() {
+      var idx = langs.indexOf(currentLang);
+      var next = langs[(idx + 1) % langs.length];
+      applyLang(next);
+      syncLangLabels();
+    }
+
+    applyLang(navigator.language || 'en');
+    syncLangLabels();
+
+    // Init Lucide icons
+    lucide.createIcons();
+
+    // Show share button if Web Share API available
+    if (navigator.share) {
+      document.getElementById('shareBtn').style.display = '';
+    }
+
+    // Toast
+    function showToast(msg) {
+      var t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(function() { t.classList.remove('show'); }, 2000);
+    }
+
+    // Copy to clipboard
+    function copyText(text) {
+      navigator.clipboard.writeText(text).then(function() {
+        showToast(getStrings().copied);
+      });
+    }
+
+    // Open address in maps
+    function openMap() {
+      window.open('https://maps.app.goo.gl/VchQxnutu3NDjPL47', '_blank');
+    }
+
+    // Flip card to show/hide QR
+    var qrDrawn = false;
+    function flipCard() {
+      var container = document.getElementById('cardContainer');
+      container.classList.toggle('flipped');
+      if (!qrDrawn) {
+        qrDrawn = true;
+        drawQR(document.getElementById('qrCanvas'), window.location.href);
+      }
+    }
+
+    // Save contact
+    function downloadVCF() {
+      var file = 'yousef-' + currentLang + '.vcf';
+      var isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+      if (isMobile) {
+        window.location.href = file;
+      } else {
+        fetch(file)
+          .then(function(r) { return r.blob(); })
+          .then(function(blob) {
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = 'yousef.vcf';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+          });
+      }
+      showToast(getStrings().saved);
+    }
+
+    // Share via Web Share API
+    function shareContact() {
+      var file = 'yousef-' + currentLang + '.vcf';
+      fetch(file)
+        .then(function(r) { return r.blob(); })
+        .then(function(blob) {
+          var vcfFile = new File([blob], 'yousef.vcf', { type: 'text/vcard' });
+          navigator.share({
+            title: 'Youssef Elmrabit',
+            text: getStrings().title + ' - Electroplanet',
+            files: [vcfFile]
+          }).catch(function() {
+            navigator.share({
+              title: 'Youssef Elmrabit',
+              text: getStrings().title + ' - Electroplanet\n+212 628-280337\nyoussefelmrabit7@gmail.com',
+              url: window.location.href
+            }).catch(function() {});
+          });
+        });
+    }
+
+    // QR Code renderer using qrcode-generator with ECC M (15% error correction)
+    function drawQR(canvas, text) {
+      var qr = qrcode(0, 'M');
+      qr.addData(text);
+      qr.make();
+
+      var moduleCount = qr.getModuleCount();
+      var cellSize = 7;
+      var quietZone = 3;
+      var totalSize = (moduleCount + quietZone * 2) * cellSize;
+      canvas.width = totalSize;
+      canvas.height = totalSize;
+      var ctx = canvas.getContext('2d');
+
+      // Dark background
+      ctx.fillStyle = '#1a1a1a';
+      ctx.fillRect(0, 0, totalSize, totalSize);
+
+      // Red modules with slight rounding
+      ctx.fillStyle = '#e10b1c';
+      for (var r = 0; r < moduleCount; r++) {
+        for (var c = 0; c < moduleCount; c++) {
+          if (qr.isDark(r, c)) {
+            var x = (c + quietZone) * cellSize;
+            var y = (r + quietZone) * cellSize;
+            ctx.beginPath();
+            ctx.roundRect(x, y, cellSize, cellSize, 1);
+            ctx.fill();
+          }
+        }
+      }
+    }
+  </script>
+</body>
+</html>
